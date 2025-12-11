@@ -20,49 +20,90 @@ app.get('/', async (req, res) => {
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
 app.get('/update-cobj', async (req, res) => {
-    const companies = 'https://api.hubspot.com/crm/v3/objects/0-2?properties=name,internal_name,phone,createdate,lastactivitydate,country,industry,balance_usd,active';
+    const industryPropertyUrl = 'https://api.hubspot.com/crm/v3/properties/companies/industry';
     const headers = {
         Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
         'Content-Type': 'application/json'
-    }
+    };
+    
     try {
-        const resp = await axios.get(companies, { headers });
-        const data = resp.data.results;
-        res.render('updates', { title: 'Companies | HubSpot APIs', data });      
+        const resp = await axios.get(industryPropertyUrl, { headers });
+        // Extract options from the response - handle different possible structures
+        let industryOptions = [];
+        if (resp.data && resp.data.options) {
+            industryOptions = resp.data.options.map(option => ({
+                value: option.value || option.label || option,
+                label: option.label || option.value || option
+            }));
+        }
+        res.render('updates', { title: 'Create Company | HubSpot APIs', industryOptions });      
     } catch (error) {
-        console.error(error);
+        console.error('Error fetching industry options:', error.response?.data || error.message);
+        // If error, render without options (fallback to empty array)
+        res.render('updates', { title: 'Create Company | HubSpot APIs', industryOptions: [] });      
     }
 });
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
 
 app.post('/update-cobj', async (req, res) => {
-    const update = {
-        properties: {
-            "name": req.body.name,
-            "internal_name": req.body.internal_name,    // Custom Property
-            "phone": req.body.phone,
-            "createdate": req.body.createdate,
-            "lastactivitydate": req.body.lastactivitydate,
-            "country": req.body.country,
-            "industry": req.body.industry,
-            "balance_usd": req.body.balance_usd,        // Custom Property
-            "active": req.body.active                   // Custom Property
-        }
+    // Validate required fields
+    if (!req.body.name || !req.body.internal_name) {
+        return res.status(400).send('Name and Internal Name are required fields.');
     }
 
-    const internal_name = req.query.internal_name;
-    const updateCompany = `https://api.hubapi.com/crm/v3/objects/0-2/${internal_name}?idProperty=internal_name`;
+    // Build properties object, only including fields with values
+    const properties = {
+        "name": req.body.name.trim(),
+        "internal_name": req.body.internal_name.trim()
+    };
+
+    // Add optional fields only if they have values
+    if (req.body.phone && req.body.phone.trim()) {
+        properties["phone"] = req.body.phone.trim();
+    }
+
+    if (req.body.country && req.body.country.trim()) {
+        properties["country"] = req.body.country.trim();
+    }
+
+    if (req.body.industry && req.body.industry.trim()) {
+        properties["industry"] = req.body.industry.trim();
+    }
+
+    // Validate and add balance_usd (must be a number)
+    if (req.body.balance_usd && req.body.balance_usd.trim()) {
+        const balance = parseFloat(req.body.balance_usd);
+        if (isNaN(balance) || balance < 0) {
+            return res.status(400).send('Balance USD must be a valid positive number.');
+        }
+        properties["balance_usd"] = balance.toString();
+    }
+
+    // Handle active checkbox (boolean)
+    // Checkbox sends "true" if checked, undefined if unchecked
+    if (req.body.active === "true") {
+        properties["active"] = "true";
+    } else {
+        properties["active"] = "false";
+    }
+
+    const newCompany = {
+        properties: properties
+    };
+
+    const createCompany = 'https://api.hubspot.com/crm/v3/objects/0-2';
     const headers = {
         Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
         'Content-Type': 'application/json'
     };
 
     try { 
-        await axios.patch(updateCompany, update, { headers } );
-        res.redirect('back');
+        await axios.post(createCompany, newCompany, { headers } );
+        res.redirect('/');
     } catch(err) {
-        console.error(err);
+        console.error('Error creating company:', err.response?.data || err.message);
+        res.status(500).send(`Error creating company: ${err.response?.data?.message || err.message}`);
     }
 });
 

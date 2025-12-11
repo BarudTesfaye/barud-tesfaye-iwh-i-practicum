@@ -5,18 +5,25 @@ html
         meta(name="viewport" content="width=device-width, initial-scale=1")
         link(rel="stylesheet", href="/css/style.css")
     body    
-        h1 Update Custom Object Form | Integrating With HubSpot I Practicum
-        p1 No access to Custom Objects, using Companies instead.<
+        h1 Create Company Form | Integrating With HubSpot I Practicum
+        p No access to Custom Objects, using Companies instead.
         a(href="/") Return to the homepage
-        .cards 
-            each company in data
-                .card 
-                    h2.card__name #{company.properties.name}
-                    p.card__internal_name #{company.properties.internal_name}
-                    p.card__phone #{company.properties.phone}
-                    p.card__createdate #{company.properties.createdate}
-                    p.card__lastactivitydate #{company.properties.lastactivitydate}
-                    p.card__country #{company.properties.country}
-                    p.card__industry #{company.properties.industry}
-                    p.card__balance_usd #{company.properties.balance_usd}
-                    p.card__active #{company.properties.active}
+        .form-wrapper
+            form(action="/update-cobj", method="POST")
+                label(for="name") Name: *
+                input(type="text", id="name", name="name", required)
+                label(for="internal_name") Internal Name: *
+                input(type="text", id="internal_name", name="internal_name", required)
+                label(for="country") Country:
+                input(type="text", id="country", name="country")
+                label(for="industry") Industry:
+                select(id="industry", name="industry")
+                    option(value="") -- Select Industry --
+                    each option in industryOptions
+                        option(value=option.value)= option.label
+                label(for="balance_usd") Balance (USD):
+                input(type="number", id="balance_usd", name="balance_usd", step="0.01", min="0")
+                label.checkbox-label(for="active")
+                    input(type="checkbox", id="active", name="active", value="true")
+                    | Active
+                input(type="submit", value="Create Company")
