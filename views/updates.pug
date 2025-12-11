@@ -1,0 +1,15 @@
+doctype html
+html 
+    head 
+        title= `${title}`
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        link(rel="stylesheet", href="/css/style.css")
+    body    
+        h1 Update Custom Object Form | Integrating With HubSpot I Practicum
+        p1 No access to Custom Objects, using Companies instead.
+        a(href="/") Return to the homepage
+        .cards 
+            each company in data
+                .card 
+                    h2.card__name #{company.properties.firstname}  #{company.properties.lastname}
+                    p.card__email #{company.properties.email}
