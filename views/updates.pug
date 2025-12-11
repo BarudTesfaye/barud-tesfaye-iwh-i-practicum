@@ -6,10 +6,17 @@ html
         link(rel="stylesheet", href="/css/style.css")
     body    
         h1 Update Custom Object Form | Integrating With HubSpot I Practicum
-        p1 No access to Custom Objects, using Companies instead.
+        p1 No access to Custom Objects, using Companies instead.<
         a(href="/") Return to the homepage
         .cards 
             each company in data
                 .card 
-                    h2.card__name #{company.properties.firstname}  #{company.properties.lastname}
-                    p.card__email #{company.properties.email}
+                    h2.card__name #{company.properties.name}
+                    p.card__internal_name #{company.properties.internal_name}
+                    p.card__phone #{company.properties.phone}
+                    p.card__createdate #{company.properties.createdate}
+                    p.card__lastactivitydate #{company.properties.lastactivitydate}
+                    p.card__country #{company.properties.country}
+                    p.card__industry #{company.properties.industry}
+                    p.card__balance_usd #{company.properties.balance_usd}
+                    p.card__active #{company.properties.active}

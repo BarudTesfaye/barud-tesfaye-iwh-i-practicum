@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const axios = require('axios');
 const app = express();
@@ -19,7 +20,7 @@ app.get('/', async (req, res) => {
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
 app.get('/update-cobj', async (req, res) => {
-    const companies = 'https://api.hubspot.com/crm/v3/objects/companies';
+    const companies = 'https://api.hubspot.com/crm/v3/objects/0-2?properties=name,internal_name,phone,createdate,lastactivitydate,country,industry,balance_usd,active';
     const headers = {
         Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
         'Content-Type': 'application/json'
@@ -27,7 +28,7 @@ app.get('/update-cobj', async (req, res) => {
     try {
         const resp = await axios.get(companies, { headers });
         const data = resp.data.results;
-        res.render('companies', { title: 'Companies | HubSpot APIs', data });      
+        res.render('updates', { title: 'Companies | HubSpot APIs', data });      
     } catch (error) {
         console.error(error);
     }
@@ -38,12 +39,20 @@ app.get('/update-cobj', async (req, res) => {
 app.post('/update-cobj', async (req, res) => {
     const update = {
         properties: {
-            "favorite_book": req.body.newVal
+            "name": req.body.name,
+            "internal_name": req.body.internal_name,    // Custom Property
+            "phone": req.body.phone,
+            "createdate": req.body.createdate,
+            "lastactivitydate": req.body.lastactivitydate,
+            "country": req.body.country,
+            "industry": req.body.industry,
+            "balance_usd": req.body.balance_usd,        // Custom Property
+            "active": req.body.active                   // Custom Property
         }
     }
 
-    const email = req.query.email;
-    const updateCompany = `https://api.hubapi.com/crm/v3/objects/companies/${email}?idProperty=email`;
+    const internal_name = req.query.internal_name;
+    const updateCompany = `https://api.hubapi.com/crm/v3/objects/0-2/${internal_name}?idProperty=internal_name`;
     const headers = {
         Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
         'Content-Type': 'application/json'
