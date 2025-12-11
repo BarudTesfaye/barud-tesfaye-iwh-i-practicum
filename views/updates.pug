@@ -6,9 +6,10 @@ html
         link(rel="stylesheet", href="/css/style.css")
     body    
         h1 Create Company Form | Integrating With HubSpot I Practicum
-        p No access to Custom Objects, using Companies instead.
-        a(href="/") Return to the homepage
-        .form-wrapper
+        div.info
+            p No access to Custom Objects, using Companies instead.
+            a(href="/") Return to the homepage
+        div.form-wrapper
             form(action="/update-cobj", method="POST")
                 label(for="name") Name: *
                 input(type="text", id="name", name="name", required)

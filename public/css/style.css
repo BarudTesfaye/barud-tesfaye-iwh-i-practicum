@@ -6,7 +6,7 @@ body, * {
     padding: 0;
 }
 
-h1 {
+h1, .info {
     margin: 1rem;
 }
 
