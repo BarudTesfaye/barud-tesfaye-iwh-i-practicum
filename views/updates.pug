@@ -1,0 +1,30 @@
+doctype html
+html 
+    head 
+        title= `${title}`
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        link(rel="stylesheet", href="/css/style.css")
+    body    
+        h1 Create Company Form | Integrating With HubSpot I Practicum
+        div.info
+            p No access to Custom Objects, using Companies instead.
+            a(href="/") Return to the homepage
+        div.form-wrapper
+            form(action="/update-cobj", method="POST")
+                label(for="name") Name: *
+                input(type="text", id="name", name="name", required)
+                label(for="internal_name") Internal Name: *
+                input(type="text", id="internal_name", name="internal_name", required)
+                label(for="country") Country:
+                input(type="text", id="country", name="country")
+                label(for="industry") Industry:
+                select(id="industry", name="industry")
+                    option(value="") -- Select Industry --
+                    each option in industryOptions
+                        option(value=option.value)= option.label
+                label(for="balance_usd") Balance (USD):
+                input(type="number", id="balance_usd", name="balance_usd", step="0.01", min="0")
+                label.checkbox-label(for="active")
+                    input(type="checkbox", id="active", name="active", value="true")
+                    | Active
+                input(type="submit", value="Create Company")

@@ -1,0 +1,34 @@
+doctype html
+html 
+    head 
+        title= `${title}`
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        link(rel="stylesheet", href="/css/style.css")
+    body    
+        h1 Company Object Table
+        a(href="/update-cobj") Add to this table
+        table
+            thead
+                tr
+                    th Company Name 
+                    th Internal Name
+                    th Phone Number
+                    th Create Date
+                    th Last Activity Date
+                    th Country/Region
+                    th Industry
+                    th Balance (USD)
+                    th Active
+            tbody
+                each company in data
+                    tr
+                        td= company.properties.name || '-'
+                        td= company.properties.internal_name || '-'
+                        td= company.properties.phone || '-'
+                        td= company.properties.createdate || '-'
+                        td= company.properties.lastactivitydate || '-'
+                        td= company.properties.country || '-'
+                        td= company.properties.industry || '-'
+                        td= company.properties.balance_usd || '-'
+                        td= company.properties.active || '-'
+
